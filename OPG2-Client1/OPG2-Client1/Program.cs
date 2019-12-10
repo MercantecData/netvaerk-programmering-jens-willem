@@ -9,24 +9,22 @@ namespace OPG2_Client1
     {
         static void Main(string[] args)
         {
-
-            int o = 1;
-
-            if (o == 1)
+            Console.WriteLine("type one to send mesagge and type 2 to recive.");
+            var i = Console.ReadLine().ToString();
+            if (i == "1")
             {
-                sender();
+                Console.WriteLine("write msg");
+                string msg = Console.ReadLine().ToString();
+                newsend(msg);
             }
-            else
+            else if (i == "2")
             {
-                reciver();
+                rtmsg();
             }
-
-            
-
         }
-        static void sender()
+        static void newsend(string msg)
         {
-            // Local sender:
+            //send
             TcpClient client = new TcpClient();
             int port = 13376;
             IPAddress ip = IPAddress.Parse("172.16.115.87");
@@ -35,16 +33,26 @@ namespace OPG2_Client1
             client.Connect(endPoint);
             NetworkStream stream = client.GetStream();
 
-            string text = "hope this works.";
-            byte[] buffer = Encoding.UTF8.GetBytes(text);
+           
+            byte[] buffer = Encoding.UTF8.GetBytes(msg);
 
             stream.Write(buffer, 0, buffer.Length);
 
-            client.Close();
+            //recive
+            ip = IPAddress.Any;
+            IPEndPoint localEndpoint = new IPEndPoint(ip, port);
+
+            TcpListener listener = new TcpListener(localEndpoint);
+            listener.Start();
+            Console.WriteLine("redy");
+
+            buffer = new byte[256];
+            int numberOfBytesRead = stream.Read(buffer, 0, buffer.Length);
+            msg = Encoding.UTF8.GetString(buffer, 0, numberOfBytesRead);
+            Console.WriteLine(msg);
         }
-        static void reciver()
+        static void rtmsg()
         {
-            // Local reciver
             int port = 13376;
             IPAddress ip = IPAddress.Any;
             IPEndPoint localEndpoint = new IPEndPoint(ip, port);
@@ -59,6 +67,12 @@ namespace OPG2_Client1
             int numberOfBytesRead = stream.Read(buffer, 0, buffer.Length);
             string msg = Encoding.UTF8.GetString(buffer, 0, numberOfBytesRead);
             Console.WriteLine(msg);
+
+            string send = "got it.";
+
+            buffer = Encoding.UTF8.GetBytes(send);
+
+            stream.Write(buffer, 0, buffer.Length);
         }
     }
 }
