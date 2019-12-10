@@ -24,6 +24,7 @@ namespace Opgave_3_Async
             NetworkStream stream = client.GetStream();
             ReceiveMessage(stream);
 
+            Console.WriteLine("Type your message here: ");
             string text = Console.ReadLine();
             byte[] buffer = Encoding.UTF8.GetBytes(text);
 
@@ -47,11 +48,6 @@ namespace Opgave_3_Async
             NetworkStream stream = client.GetStream();
             ReceiveMessage(stream);
 
-            Console.Write("write your message here: ");
-            string text = Console.ReadLine();
-            byte[] buffer = Encoding.UTF8.GetBytes(text);
-
-            stream.Write(buffer, 0, buffer.Length);
             Console.ReadKey();
         }
         static async void ReceiveMessage(NetworkStream stream)
