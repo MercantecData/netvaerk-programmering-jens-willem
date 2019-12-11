@@ -37,7 +37,6 @@ namespace Opgave_3_Async
             int port = 13356;
             IPAddress ip = IPAddress.Any;
             IPEndPoint localEndPoint = new IPEndPoint(ip, port);
-
             TcpListener listener = new TcpListener(localEndPoint);
 
             listener.Start();
@@ -57,5 +56,7 @@ namespace Opgave_3_Async
             string receivedMessage = Encoding.UTF8.GetString(buffer, 0, numberOfBytesRead);
             Console.Write("\n" + receivedMessage);
         }
+        //Kan man lave en server der arbejder sammen med flere klienter på samme tid?
+        //Svar: Ja
     }
 }
