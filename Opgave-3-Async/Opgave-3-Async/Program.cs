@@ -50,14 +50,13 @@ namespace Opgave_3_Async
             NetworkStream stream = client.GetStream();
             ReceiveMessage(stream);
             
-            Console.ReadKey();
         }
         static async void ReceiveMessage(NetworkStream stream)
         {
             byte[] buffer = new byte[256];
-            int numberOfBytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            int numberOfBytesRead = await stream.ReadAsync(buffer, 0, buffer.Length); 
             string receivedMessage = Encoding.UTF8.GetString(buffer, 0, numberOfBytesRead);
-            Console.WriteLine(receivedMessage);
+            Console.WriteLine("Not you: " + receivedMessage);
         }
         //Kan man lave en server der arbejder sammen med flere klienter på samme tid?
         //Svar: Ja
