@@ -2,6 +2,7 @@
 using System.Text;
 using System.Net.Sockets;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Opgave_3_Async
 {
@@ -9,8 +10,17 @@ namespace Opgave_3_Async
     {
         static void Main(string[] args)
         {
+            bool isRunning = true;
             Server();
             Client();
+            while (isRunning)
+            {
+                string text = Console.ReadLine();
+                if (text == "EXIT")
+                {
+                    isRunning = false;
+                }
+            }
         }
         static void Client()
         {
@@ -34,7 +44,6 @@ namespace Opgave_3_Async
 
             listener.Start();
             TcpClient client = await listener.AcceptTcpClientAsync();
-
             NetworkStream stream = client.GetStream();
             ReceiveMessage(stream);
             SendMessage(stream);
