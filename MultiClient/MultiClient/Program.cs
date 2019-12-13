@@ -10,20 +10,17 @@ namespace MultiClient
     {
         static void Main(string[] args)
         {
-
+            MyServer();
         }
-        public List<TcpClient> clients = new List<TcpClient>();
-        public MyServer()
+        public static List<TcpClient> clients = new List<TcpClient>();
+        public static void MyServer()
         {
             IPAddress ip = IPAddress.Parse("127.0.0.1");
             int port = 13376;
             TcpListener listener = new TcpListener(ip, port);
             listener.Start();
 
-            TcpClient client = listener.AcceptTcpClient();
-            NetworkStream stream = client.GetStream();
-
-            ReceiveMessages(stream);
+            AcceptClients(listener);
 
             bool isRunning = true;
             while (isRunning)
@@ -32,12 +29,13 @@ namespace MultiClient
                 Console.Write("Write message: ");
                 string text = Console.ReadLine();
                 byte[] buffer = Encoding.UTF8.GetBytes(text);
-                foreach(TcpClient client in clients) {
+                foreach(TcpClient client in clients)
+                {
                     client.GetStream().Write(buffer, 0, buffer.Length);
                 }
             }
         }
-        public async void ReceiveMessages(NetworkStream stream)
+        public static async void ReceiveMessages(NetworkStream stream)
         {
             byte[] buffer = new byte[256];
             bool isRunning = true;
@@ -48,7 +46,7 @@ namespace MultiClient
                 Console.WriteLine("client writes: " + text);
             }
         }
-        public async void AcceptClients(TcpListener listener)
+        public static async void AcceptClients(TcpListener listener)
         {
             bool isRunning = true;
             while (isRunning)
