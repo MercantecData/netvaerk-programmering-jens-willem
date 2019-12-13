@@ -8,21 +8,30 @@ namespace Opgave_3_Async
 {
     class Program
     {
+        static public NetworkStream stream;
         static void Main(string[] args)
         {
+            //for at bruge det her program som client fjern: ConnectToClient TcpListener... og Server
+            //for server fjern: NetworkStream stream... og Client
             bool isRunning = true;
-            Server();
-            Client();
+            TcpListener listener = InitiateServer();
+            ConnectToClient(listener);
+            NetworkStream stream = InitiateClient();
+            Console.ReadKey();
             while (isRunning)
             {
-                string text = Console.ReadLine();
-                if (text == "EXIT")
-                {
-                    isRunning = false;
-                }
+                Server(listener);
+                Client(stream);
             }
         }
-        static void Client()
+        static async void Client(NetworkStream stream)
+        {
+            ReceiveMessage(stream);
+            SendMessage(stream);
+            await Task.Delay(1000);
+            Console.Write("client: ");
+        }
+        static NetworkStream InitiateClient()
         {
             TcpClient client = new TcpClient();
             int port = 13356;
@@ -32,10 +41,16 @@ namespace Opgave_3_Async
             client.Connect(endPoint);
 
             NetworkStream stream = client.GetStream();
+            return stream;
+        }
+        static async void Server(TcpListener listener)
+        {
             ReceiveMessage(stream);
             SendMessage(stream);
+            await Task.Delay(1000);
+            Console.Write("server: ");
         }
-        static async void Server()
+        static TcpListener InitiateServer()
         {
             int port = 13356;
             IPAddress ip = IPAddress.Any;
@@ -43,21 +58,22 @@ namespace Opgave_3_Async
             TcpListener listener = new TcpListener(localEndPoint);
 
             listener.Start();
+            return listener;
+        }
+        static async void ConnectToClient(TcpListener listener)
+        {
             TcpClient client = await listener.AcceptTcpClientAsync();
-            NetworkStream stream = client.GetStream();
-            ReceiveMessage(stream);
-            SendMessage(stream);
+            stream = client.GetStream();
         }
         static async void ReceiveMessage(NetworkStream stream)
         {
             byte[] buffer = new byte[256];
             int numberOfBytesRead = await stream.ReadAsync(buffer, 0, buffer.Length); 
             string receivedMessage = Encoding.UTF8.GetString(buffer, 0, numberOfBytesRead);
-            Console.WriteLine("Not you: " + receivedMessage);
+            Console.WriteLine("\n" + "Not you: " + receivedMessage);
         }
         static void SendMessage(NetworkStream stream)
         {
-            Console.Write("Message: ");
             string text = Console.ReadLine();
             byte[] buffer = Encoding.UTF8.GetBytes(text);
 
